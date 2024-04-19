@@ -1,7 +1,7 @@
 package fr.g123k.flutterappbadger;
 
 import android.content.Context;
-
+import android.app.NotificationManager;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -17,6 +17,7 @@ public class FlutterAppBadgerPlugin implements MethodCallHandler, FlutterPlugin 
   private Context applicationContext;
   private MethodChannel channel;
   private static final String CHANNEL_NAME = "g123k/flutter_app_badger";
+  private NotificationManager mNotificationManager;
 
   /**
    * Plugin registration.
@@ -27,6 +28,7 @@ public class FlutterAppBadgerPlugin implements MethodCallHandler, FlutterPlugin 
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_NAME);
     channel.setMethodCallHandler(this);
     applicationContext = flutterPluginBinding.getApplicationContext();
+    mNotificationManager = (NotificationManager) applicationContext.getSystemService(applicationContext.NOTIFICATION_SERVICE);
   }
 
   @Override
@@ -42,7 +44,7 @@ public class FlutterAppBadgerPlugin implements MethodCallHandler, FlutterPlugin 
       result.success(null);
     } else if (call.method.equals("removeBadge")) {
       ShortcutBadger.removeCount(applicationContext);
-      applicationContext.getSystemService(Context.NOTIFICATION_SERVICE).cancelAll();
+      mNotificationManager.cancelAll();
       result.success(null);
     } else if (call.method.equals("isAppBadgeSupported")) {
       result.success(ShortcutBadger.isBadgeCounterSupported(applicationContext));
